@@ -1,0 +1,99 @@
+# Global Ransomware Landscape Explorer
+
+An interactive threat-intelligence dashboard that combines ransomware leak-site claims with vulnerability data and a **local** LLM (Ollama) to rank ransomware groups on a transparent scoreboard. Built as a student project (Fall 2026) to make it easier for non-experts to see which groups are active, who they claim to target, and which known vulnerabilities they are associated with.
+
+> **Important:** victim data are **claims posted by the groups on their leak sites**, not confirmed incidents. A group can post a company name even when no incident has been confirmed.
+
+## What it does
+
+- Ranks groups on a **composite score** built from four separate factors, each with its own slider:
+  | Factor | Meaning | How it is computed |
+  |---|---|---|
+  | Attack volume | How many victims a group has claimed | Claims ÷ claims of the busiest group |
+  | Target diversity | How widely claims spread across countries and sectors | "Effective number" of countries (cap 10) and sectors (cap 8), averaged |
+  | Vulnerability severity | How bad the group's known CVEs are | Average CVSS of mapped CVEs ÷ 10 |
+  | Exploit likelihood | How likely those CVEs are to be exploited | Average EPSS (0–1) of mapped CVEs |
+- Uses a local model (Qwen via Ollama) to **label each victim's country and sector** (the leak-site feed has neither) and to write short plain-English briefings from the computed numbers. The model never calculates scores.
+- Maps groups to CVEs using **CISA #StopRansomware advisories**, checked against the CISA KEV catalog.
+
+Score = (w_vol·volume + w_div·diversity + w_sev·severity + w_epss·EPSS) ÷ (sum of weights) × 100. Missing values count as 0, so gaps in the data cannot raise a group's score. Severity and likelihood are deliberately kept separate: CVSS measures impact, EPSS estimates the chance of exploitation in the next 30 days.
+
+## Screenshots
+
+<!-- Add your own screenshots to docs/screenshots/ with these names before pushing. -->
+| Scoreboard and weight sliders | Group profile |
+|---|---|
+| ![Scoreboard](docs/screenshots/scoreboard.png) | ![Group profile](docs/screenshots/group_profile.png) |
+
+| AI briefing | Mapping check |
+|---|---|
+| ![Briefing](docs/screenshots/briefing.png) | ![Mapping check](docs/screenshots/mapping_check.png) |
+
+## Outputs
+
+| File | What it is | How to produce it |
+|---|---|---|
+| `outputs/mapping_check.md` | Group → CVE → CVSS/EPSS table with a hand-check checklist (default groups: Akira, Play, Clop) | `python verify_mapping.py` |
+| `scoreboard.csv` | Current scoreboard | "Download scoreboard (CSV)" button in the dashboard |
+| `ransomware.db` | SQLite database behind the dashboard (not committed) | `python pipeline.py` |
+
+## Quick start (Windows, Command Prompt)
+
+Requires Python 3.10+, [Ollama](https://ollama.com), and a free [NVD API key](https://nvd.nist.gov/developers/request-an-api-key).
+
+```
+pip install -r requirements.txt
+ollama pull qwen3.5:4b            # or any model; set MODEL in classify.py and app.py
+
+python 01_kev_download.py         # saves kev.json (CISA KEV catalog)
+python 02_ransomlook_posts.py     # saves ransomlook_raw.json (about 30 days of claims)
+
+set NVD_API_KEY=your-key-here
+python pipeline.py                # builds ransomware.db (posts, KEV, CVSS, EPSS)
+python classify.py --limit 100    # quick test of AI country/sector labeling
+python classify.py                # label everything (resumable; see --workers in the file header)
+python verify_mapping.py          # print and save the mapping check table
+streamlit run app.py              # open the dashboard
+```
+
+Never commit your API key. `.env` and the database are in `.gitignore`.
+
+## Data sources and attribution
+
+| Source | Used for | Notes |
+|---|---|---|
+| [Ransomware.live](https://www.ransomware.live) | Leak-site claims, country fields, group details (in evaluation) | Free for academic use with attribution. Entries are claims, not confirmed incidents. See `probe_ransomwarelive.py`. |
+| [RansomLook](https://www.ransomlook.io) | Leak-site claims (current feed) | Content licensed CC BY 4.0. No country or sector fields. |
+| [CISA KEV](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) | Known-exploited CVEs, ransomware-use flag | Public. |
+| [NIST NVD](https://nvd.nist.gov) | CVSS scores | Public API, key recommended. |
+| [FIRST EPSS](https://www.first.org/epss) | Exploit-likelihood scores | Public API. |
+| [CISA #StopRansomware advisories](https://www.cisa.gov/stopransomware) | Group → CVE mapping (`group_cves.csv`) | Verified by hand; see `outputs/mapping_check.md`. |
+| [MITRE ATT&CK](https://attack.mitre.org) | Technique enrichment (exploratory, `explore_sources.py`) | Only a few ransomware groups are covered. |
+
+## Known limitations
+
+- **Group → CVE mapping is partial.** Only groups with a public advisory (or a clearly marked secondary source) are mapped. Other groups show empty severity and EPSS. Leak sites do not say which vulnerability was used.
+- **AI labels are imperfect.** A small local model labels country and sector. Unclear cases are `Unknown` and excluded. Accuracy should be measured on a hand-checked sample before relying on diversity scores.
+- **Short time window** in the sample data; leak sites show what groups choose to publish.
+- The score is a transparent heuristic, not a risk prediction for any organization.
+
+## Project layout
+
+```
+01_kev_download.py ... 03_nvd_test.py   data download and API tests
+pipeline.py                             builds ransomware.db (posts, KEV, group→CVE, NVD, EPSS)
+classify.py                             local-LLM country/sector labeling
+verify_mapping.py                       mapping check table for hand verification
+explore_sources.py                      MITRE ATT&CK / CISA advisory exploration
+probe_ransomwarelive.py                 evaluates Ransomware.live as a data source
+app.py                                  Streamlit dashboard
+group_cves.csv                          group → CVE mapping with sources
+```
+
+## Roadmap
+
+- [ ] Measure AI label accuracy on a hand-checked sample
+- [ ] Extend the advisory mapping to more groups; add ATT&CK techniques to group profiles
+- [ ] Evaluate Ransomware.live (country field, group details) alongside RansomLook
+- [ ] 90+ days of history and ranking-stability tests across weights
+- [ ] Tool-using agent (Langflow or plain Python) for natural-language questions
