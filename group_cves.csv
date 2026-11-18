@@ -1,0 +1,20 @@
+group,cve,source,verified
+akira,CVE-2020-3259,CISA AA24-109A Akira (updated 2025-11-13) https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-109a,yes
+akira,CVE-2020-3580,CISA AA24-109A Akira (updated 2025-11-13) https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-109a,yes
+akira,CVE-2023-20269,CISA AA24-109A Akira (updated 2025-11-13) https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-109a,yes
+akira,CVE-2023-27532,CISA AA24-109A Akira (updated 2025-11-13) https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-109a,yes
+akira,CVE-2023-28252,CISA AA24-109A Akira (updated 2025-11-13) https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-109a,yes
+akira,CVE-2024-37085,CISA AA24-109A Akira (updated 2025-11-13) https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-109a,yes
+akira,CVE-2024-40711,CISA AA24-109A Akira (updated 2025-11-13) https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-109a,yes
+akira,CVE-2024-40766,CISA AA24-109A Akira (updated 2025-11-13) https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-109a,yes
+play,CVE-2018-13379,CISA AA23-352A Play https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-352a,yes
+play,CVE-2020-12812,CISA AA23-352A Play https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-352a,yes
+play,CVE-2022-41040,CISA AA23-352A Play https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-352a,yes
+play,CVE-2022-41082,CISA AA23-352A Play https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-352a,yes
+rhysida,CVE-2020-1472,CISA AA23-319A Rhysida https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-319a,yes
+medusa,CVE-2024-1709,CISA AA25-071A Medusa https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-071a,yes
+medusa,CVE-2023-48788,CISA AA25-071A Medusa https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-071a,yes
+clop,CVE-2023-34362,CISA AA23-158A CL0P https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a,yes
+clop,CVE-2023-0669,CISA AA23-158A CL0P https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a,yes
+qilin,CVE-2024-21762,Secondary: PRODAFT report via Security Affairs 2025-06-06 (no CISA advisory) https://securityaffairs.com/178736/hacking/attackers-exploit-fortinet-flaws-to-deploy-qilin-ransomware.html,secondary
+qilin,CVE-2024-55591,Secondary: PRODAFT report via Security Affairs 2025-06-06 (no CISA advisory) https://securityaffairs.com/178736/hacking/attackers-exploit-fortinet-flaws-to-deploy-qilin-ransomware.html,secondary

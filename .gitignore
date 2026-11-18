@@ -1,0 +1,8 @@
+ransomware.db
+kev.json
+ransomlook_raw.json
+enterprise-attack.json
+rl_live_*.json
+__pycache__/
+*.pyc
+.env
